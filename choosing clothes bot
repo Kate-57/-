@@ -1,0 +1,104 @@
+print("Здравствуйте! Это бот, который помогает подбирать одежду по погоде.")
+print("Доступные команды:")
+print("add - добавить предметы одежды;")
+print("clear - очистить список одежды;")
+print("clothes - смотреть список одежды;")
+print("commands - смотреть список команд;")
+print("choose - бот выбирает подходящую одежду;")
+print("end - завершить работу программы.")
+print("Введите команду:")
+inp = input().lower()
+clothes_dict = {} #словарь добавленных предметов одежды с нижней и верхней границами температуры
+while inp != "end":
+    #в следующем цикле проверяется, что введена существующая команда, и если это не так, то ввод производится ещё раз:
+    while inp != "add" and inp != "clear" and inp != "clothes" and inp != "commands" and inp != "choose":
+        print("Введите 'add', 'clear', 'clothes', 'commands' или 'choose':")
+        inp = input().lower()
+    if inp == "add":
+        print("Сколько предметов одежды надо добавить?")
+        number_str = input()
+        #в следующем цикле проверяется, что введено натуральное число
+        while number_str == "" or not(number_str.isdigit() and int(number_str) > 0):
+            print("Введите натуральное число:")
+            number_str = input()
+        number = int(number_str)
+        for i in range(number):
+            print("Введите название одного предмета одежды, который хотите добавить:")
+            item = input()
+            while item == "" or item in clothes_dict:
+                print("Такая одежда уже есть в списке (или введена пустая строка). Введите другое название:")
+                item = input()
+            print("Введите нижнюю границу температуры, в которую можно ходить в этой одежде (например, '+5' - не вводить '5'):")
+            lower_temp_str = input()
+            #в следующем цикле проверяется, что введено целое число со знаком '+' или '-', и если это не так, то ввод производится ещё раз:
+            while lower_temp_str == "" or lower_temp_str != "0" and (lower_temp_str[0] != '+' and lower_temp_str[0] != '-' or not lower_temp_str[1::].isdigit()):
+                print("Введите нижнюю границу температуры в виде целого числа со знаком '+' или '-':")
+                lower_temp_str = input()
+            if lower_temp_str[0] == '+':
+                lower_temp = int(lower_temp_str[1::])
+            elif lower_temp_str[0] == '-':
+                lower_temp = -int(lower_temp_str[1::])
+            else:
+                lower_temp = 0
+            print("Теперь введите верхнюю границу (например, '+20' - не вводить '20'):")
+            upper_temp_str = input()
+            #в следующем цикле проверяется, что введено целое число со знаком '+' или '-', и если это не так, то ввод производится ещё раз:
+            while upper_temp_str == "" or upper_temp_str != "0" and (upper_temp_str[0] != '+' and upper_temp_str[0] != '-' or not upper_temp_str[1::].isdigit()):
+                print("Введите верхнюю границу температуры в виде целого числа со знаком '+' или '-':")
+                upper_temp_str = input()
+            if upper_temp_str[0] == '+':
+                upper_temp = int(upper_temp_str[1::])
+            elif upper_temp_str[0] == '-':
+                upper_temp = -int(upper_temp_str[1::])
+            else:
+                upper_temp = 0
+            if lower_temp <= upper_temp:
+                temp_arr = [lower_temp, upper_temp]
+            else: #если введена верхняя граница температуры, которая меньше нижней, то они записываются в массив температур наоборот
+                temp_arr = [upper_temp, lower_temp]
+            clothes_dict[item] = temp_arr #добавление одежды в словарь
+            print("Одежда добавлена.")
+    elif inp == "clear":
+        clothes_dict.clear()
+        print("Все предметы одежды удалены.")
+    elif inp == "clothes":
+        if len(clothes_dict) == 0:
+            print("В списке нет одежды.")
+        else:
+            for elem in clothes_dict:
+                print(elem, ": ( температура от", (clothes_dict[elem])[0], "до", (clothes_dict[elem])[1], ")")
+    elif inp == "commands":
+        print("Доступные команды:")
+        print("add - добавить предметы одежды;")
+        print("clear - очистить список одежды;")
+        print("clothes - смотреть список одежды;")
+        print("commands - смотреть список команд;")
+        print("choose - бот выбирает подходящую одежду;")
+        print("end - завершить работу программы.")
+    else:
+        if len(clothes_dict) > 0:
+            print("Введите температуру на улице (например, '+20' - не вводить '20'):")
+            temp_str = input()
+            #в следующем цикле проверяется, что введено целое число со знаком '+' или '-', и если это не так, то ввод производится ещё раз:
+            while temp_str == "" or temp_str != "0" and (temp_str[0] != '+' and temp_str[0] != '-' or not temp_str[1::].isdigit()):
+                print("Введите температуру в виде целого числа со знаком '+' или '-':")
+                temp_str = input()
+            if temp_str[0] == '+':
+                temp = int(temp_str[1::])
+            elif temp_str[0] == '-':
+                temp = -int(temp_str[1::])
+            else:
+                temp = 0
+            clothes_arr = []
+            for elem in clothes_dict:
+                if clothes_dict[elem][0] <= temp and clothes_dict[elem][1] >= temp:
+                    clothes_arr.append(elem)
+            if len(clothes_arr) == 0:
+                print("Нет подходящей одежды")
+            else:
+                print("Можно надеть:")
+                for elem in clothes_arr:
+                    print(elem)
+        else:
+            print("В списке нет одежды.")
+    inp = input().lower()
